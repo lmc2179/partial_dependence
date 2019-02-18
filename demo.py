@@ -1,4 +1,5 @@
 #Run curl https://raw.githubusercontent.com/selva86/datasets/master/BostonHousing.csv > BostonHousing.csv
+from partial_dependence_analysis import mean_partial_dependence
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
@@ -17,13 +18,7 @@ m = RandomForestRegressor(n_estimators=1000)
 m.fit(X, y)
 
 crim_range = np.linspace(X['crim'].min(), X['crim'].max(), 100)
-avg_pd = []
-
-for c in crim_range:
-    X_plot = X.copy()
-    X_plot['crim'] = c
-    y_mean = np.mean(m.predict(X_plot))
-    avg_pd.append(y_mean)
+avg_pd = mean_partial_dependence(m, X, y, 'crim', crim_range)
 
 [plt.axvline(q, linestyle='dotted') for q in X['crim'].quantile([0, 0.25, 0.5, 0.75, 1.0])]
 plt.plot(crim_range, avg_pd)

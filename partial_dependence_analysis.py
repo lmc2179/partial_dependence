@@ -13,6 +13,9 @@ def mean_partial_dependence(model, X, y, col, values, method='predict'):
         X_copy = X.copy()
         X_copy[col] = value
         f = getattr(model, method) 
-        y_mean = np.mean(f(X_copy))
+        if method == 'predict_proba':
+          y_mean = np.mean(f(X_copy), axis=0)
+        else:
+          y_mean = np.mean(f(X_copy))
         results.append(y_mean)
     return np.array(results)
